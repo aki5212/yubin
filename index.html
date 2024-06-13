@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>郵便番号入力フォーム</title>
+</head>
+<body>
+    <h1>郵便番号入力フォーム</h1>
+  <form id="contactForm">
+    <label for="postcode">郵便番号:</label>
+    <input type="text" id="postcode" name="postcode">
+    <br>
+    <label for="prefecture">都道府県:</label>
+    <input type="text" id="prefecture" name="prefecture" readonly>
+    <br>
+    <label for="city">市町村:</label>
+    <input type="text" id="city" name="city" readonly>
+    <br>
+    <label for="town">町等:</label>
+    <input type="text" id="town" name="town" readonly>
+  </form>
+  <button type="button" id="clearButton">クリア</button>
+  <script>
+    const apiUrl = 'https://h30.zipserver.jp/app/api/v1/zip';
+    const apiKey = '';
+    const contactForm = document.getElementById('contactForm');
+    const postcodeInput = document.getElementById('postcode');
+    const prefectureInput = document.getElementById('prefecture');
+    const cityInput = document.getElementById('city');
+    const townInput = document.getElementById('town');
+    const clearButton = document.getElementById('clearButton');
+
+    postcodeInput.addEventListener('input', () => {
+      const inputValue = postcodeInput.value;
+      if (inputValue.length === 7) {
+        // Zipserver APIを使って郵便番号から都道府県、市町村、町等の情報を取得する
+        fetch(`https://h30.zipserver.jp/app/api/v1/zip?zipcode=${inputValue}`)
+
+          .then(response => response.json())
+          .then(data => {
+            prefectureInput.value = data.prefecture;
+            cityInput.value = data.city;
+            townInput.value = data.town;
+          })
+          .catch(error => {
+            console.error('Error fetching data:', error);
+          });
+      } else {
+        prefectureInput.value = '';
+        cityInput.value = '';
+        townInput.value = '';
+      }
+    });
+
+    clearButton.addEventListener('click', () => {
+      postcodeInput.value = '';
+      prefectureInput.value = '';
+      cityInput.value = '';
+      townInput.value = '';
+    });
+ </script>
+</body>
+
+</html>
